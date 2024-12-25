@@ -1,0 +1,6 @@
+.signUp {
+    display: grid;                  
+    min-height: 100vh;              
+    grid-template-columns: repeat(2, 1fr); 
+    -webkit-font-smoothing: antialiased;
+}
