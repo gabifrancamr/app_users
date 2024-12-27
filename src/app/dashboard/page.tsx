@@ -1,16 +1,18 @@
 "use client"
 
 import TablePagination from "@/components/TablePagination/tablePagination"
+import UsersTable from "@/components/UsersTable/usersTable"
 import { User } from "@/types"
-import { Box, Flex, Input, Stack, Table } from "@chakra-ui/react"
+import { Box, Flex, Input, Spinner, Text } from "@chakra-ui/react"
 import axios from "axios"
-import Image from "next/image"
 import { useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
+import { MdError } from "react-icons/md"
 
 export default function Dashboard() {
   const [users, setUsers] = useState<User[]>([])
   const [filteredUsers, setFilteredUsers] = useState<User[]>([])
+  const [errorFindUsers, setErrorFindUsers] = useState(false)
   const [inputSearch, setInputSearch] = useState('')
 
   const searchParams = useSearchParams()
@@ -31,11 +33,11 @@ export default function Dashboard() {
         const response = await axios.post(
           'https://techsoluctionscold.com.br/api-boats/tests/list_all.php',
         )
-        console.log('Response:', response.data)
         setUsers(response.data)
         setFilteredUsers(response.data)
       } catch (error) {
         console.log('Erro na requisição:', error)
+        setErrorFindUsers(true)
       }
     }
 
@@ -56,53 +58,32 @@ export default function Dashboard() {
   }, [inputSearch, users])
 
   return (
-    <Flex alignItems={"center"} justify={"center"} padding={"1.5"}>
-      {users.length > 0 ? (
-        <Box spaceY={3} width={{ base: '100%', md: 'auto'}} padding={{base: '2rem'}}>
-          <Input
-            value={inputSearch}
-            onChange={(e) => setInputSearch(e.target.value)}
-          />
-          <Stack gap="10">
-            <Table.ScrollArea borderWidth="1px">
-              <Table.Root variant="outline" interactive showColumnBorder>
-                <Table.Header>
-                  <Table.Row>
-                    <Table.ColumnHeader>ID</Table.ColumnHeader>
-                    <Table.ColumnHeader>Nome</Table.ColumnHeader>
-                    <Table.ColumnHeader>E-mail</Table.ColumnHeader>
-                    <Table.ColumnHeader>Phone</Table.ColumnHeader>
-                    <Table.ColumnHeader>Photo</Table.ColumnHeader>
-                  </Table.Row>
-                </Table.Header>
-                <Table.Body>
-                  {currentUsers.map((user) => (
-                    <Table.Row key={user.id}>
-                      <Table.Cell>{user.id}</Table.Cell>
-                      <Table.Cell>{user.name}</Table.Cell>
-                      <Table.Cell>{user.email}</Table.Cell>
-                      <Table.Cell>0123456789</Table.Cell>
-                      {user.photo_filename && (
-                        <Table.Cell display={"flex"} justifyContent={"center"}>
-                          <Image
-                            src={`https://techsoluctionscold.com.br/api-boats/uploads/tests/${user.photo_filename}`}
-                            alt=""
-                            width={100}
-                            height={100}
-                          />
-                        </Table.Cell>
-                      )}
-                    </Table.Row>
-                  ))}
-                </Table.Body>
-              </Table.Root>
-            </Table.ScrollArea>
-          </Stack>
-          <TablePagination currentPage={currentPage}  usersLength={usersLength} totalPages={totalPages} />
-        </Box>
+    <Box>
+      {!errorFindUsers ? (
+        users.length > 0 ? (
+          <Flex alignItems={"flex-start"} justify={"center"} padding={"1.5"} height={"100vh"}>
+            <Box spaceY={3} width={{ base: '100%', md: 'auto' }} padding={'2rem'}>
+              <Input
+                value={inputSearch}
+                onChange={(e) => setInputSearch(e.target.value)}
+              />
+              <UsersTable currentUsers={currentUsers} />
+              <TablePagination currentPage={currentPage} usersLength={usersLength} totalPages={totalPages} />
+            </Box>
+          </Flex>
+        ) : (
+          <Flex alignItems={"center"} justify={"center"} gap={"1.5"} height={"100vh"}>
+            <Spinner />
+            <Text textStyle={"2xl"}>Carregando usuários...</Text>
+          </Flex>
+        )
       ) : (
-        <p>Carregando usuários</p>
-      )}
-    </Flex>
+        <Flex alignItems={"center"} justify={"center"} gap={"1.5"} height={"100vh"}>
+          <MdError size={30} />
+          <Text textStyle={"2xl"}>Usuários não encontrados</Text>
+        </Flex>
+      )
+      }
+    </Box>
   )
 }
