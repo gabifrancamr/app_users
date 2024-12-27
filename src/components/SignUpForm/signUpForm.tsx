@@ -4,12 +4,13 @@ import styles from "./signUp.module.css";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { PasswordInput } from "@/components/ui/password-input";
+import imagePreview from "@/hooks/imagePreview";
 import { Flex, Input, Stack } from "@chakra-ui/react";
 import { zodResolver } from '@hookform/resolvers/zod';
 import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { CgProfile } from 'react-icons/cg';
 import { toast } from 'sonner';
@@ -56,8 +57,6 @@ export type typeSignUpSchema = zod.infer<typeof signUpSchema>
 export default function SignUpForm() {
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-    const [preview, setPreview] = useState<string | null>(null)
-
     const router = useRouter()
 
     const {
@@ -72,18 +71,7 @@ export default function SignUpForm() {
     const registerWithMask = useHookFormMask(register);
 
     const watchImage = watch('image')
-
-    useEffect(() => {
-        if (watchImage && watchImage[0]) {
-            const objectUrl = URL.createObjectURL(watchImage[0])
-            setPreview(objectUrl)
-
-            // Limpa a URL criada para evitar vazamento de memória
-            return () => URL.revokeObjectURL(objectUrl)
-        } else {
-            setPreview(null)
-        }
-    }, [watchImage])
+    const preview = imagePreview(watchImage)
 
     async function handleCreateNewUser({
         name,
@@ -165,7 +153,7 @@ export default function SignUpForm() {
                         display={"none"}
                         {...register('image')}
                     />
-                    <Button type="button">
+                    <Button type="button" asChild>
                         <label className={styles.labelButton} htmlFor="files">Selecionar Imagem</label>
                     </Button>
                 </Flex>
@@ -232,9 +220,9 @@ export default function SignUpForm() {
                         autoComplete="new-password"
                     />
                 </Field>
-                <Button 
-                    type="submit" 
-                    loading={isSubmitting} 
+                <Button
+                    type="submit"
+                    loading={isSubmitting}
                     disabled={isSubmitting}
                 >
                     Cadastrar
