@@ -3,7 +3,7 @@ import styles from "./signUp.module.css";
 
 import { Field } from "@/components/ui/field";
 import { PasswordInput } from "@/components/ui/password-input";
-import { Button, Input, Stack } from "@chakra-ui/react";
+import { Button, Flex, Input, Stack } from "@chakra-ui/react";
 import { zodResolver } from '@hookform/resolvers/zod';
 import axios from 'axios';
 import Image from "next/image";
@@ -122,8 +122,8 @@ export default function SignUpForm() {
     return (
         <form className={styles.form} onSubmit={handleSubmit(handleCreateNewUser)}>
             <Stack gap="4" align="center" maxW="sm">
-                <div className={styles.areaImageBtn}>
-                    <div className={styles.areaImage}>
+                <Flex flexDirection={"column"} alignItems={"center"} gap={"0.75rem"}>
+                    <Flex justifyContent={"center"}>
                         {preview ? (
                             <Image
                                 src={preview}
@@ -133,20 +133,20 @@ export default function SignUpForm() {
                                 height={70}
                             />
                         ) : (
-                            <CgProfile className={styles.icon} />
+                            <CgProfile size={70} />
                         )}
-                    </div>
-                    <input
+                    </Flex>
+                    <Input
                         type="file"
                         id="files"
                         accept="image/*"
-                        className={styles.inputImage}
+                        display={"none"}
                         {...register('image')}
                     />
-                    <Button type="button" className={styles.btn}>
-                        <label htmlFor="files">Select file</label>
+                    <Button type="button" width={"6rem"}>
+                        <label className={styles.labelButton} htmlFor="files">Select file</label>
                     </Button>
-                </div>
+                </Flex>
                 <Field
                     label="Nome completo"
                     invalid={!!errors.name}
@@ -195,7 +195,7 @@ export default function SignUpForm() {
                         onVisibleChange={setShowConfirmPassword}
                     />
                 </Field>
-                <Button type="submit" className={styles.btn} disabled={isSubmitting}>Cadastrar</Button>
+                <Button type="submit" width={"6rem"} disabled={isSubmitting}>Cadastrar</Button>
             </Stack>
         </form>
     )
