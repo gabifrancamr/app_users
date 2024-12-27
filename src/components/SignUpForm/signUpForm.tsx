@@ -1,27 +1,55 @@
 "use client"
 import styles from "./signUp.module.css";
 
+import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { PasswordInput } from "@/components/ui/password-input";
-import { Button, Flex, Input, Stack } from "@chakra-ui/react";
+import { Flex, Input, Stack } from "@chakra-ui/react";
 import { zodResolver } from '@hookform/resolvers/zod';
-import axios from 'axios';
+import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { CgProfile } from 'react-icons/cg';
 import { toast } from 'sonner';
+import { useHookFormMask } from "use-mask-input";
 import * as zod from 'zod';
 
 const signUpSchema = zod.object({
-    name: zod.string(),
-    email: zod.string(),
-    phone: zod.string(),
-    password: zod.string(),
+    name: zod
+        .string()
+        .nonempty("Nome completo é obrigatório")
+        .min(3, "O nome deve ter no mínimo 3 caracteres"),
+    email: zod
+        .string()
+        .nonempty("E-mail é obrigatório")
+        .email("Digite um e-mail válido"),
+    phone: zod
+        .string()
+        .optional()
+        .refine(
+            (val) => val === "" || (val && val.replace(/\D/g, "").length === 11),
+            {
+                message: "Número de celular inválido",
+            }
+        ),
+    image: zod.any().optional(),
+    password: zod
+        .string()
+        .nonempty("Senha é obrigatória")
+        .min(5, "A senha deve ter no mínimo 5 caracteres")
+        .max(15, "A senha deve ter no máximo 15 caracteres"),
     confirmPassword: zod.string(),
-    image: zod.any(),
-})
+}).superRefine((data, ctx) => {
+    if (data.password !== data.confirmPassword) {
+        ctx.addIssue({
+            path: ["confirmPassword"],
+            code: zod.ZodIssueCode.custom,
+            message: "As senhas não coincidem",
+        });
+    }
+});
 
 export type typeSignUpSchema = zod.infer<typeof signUpSchema>
 
@@ -29,7 +57,6 @@ export default function SignUpForm() {
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
     const [preview, setPreview] = useState<string | null>(null)
-    const [phoneNumber, setPhoneNumber] = useState('')
 
     const router = useRouter()
 
@@ -41,6 +68,8 @@ export default function SignUpForm() {
     } = useForm<typeSignUpSchema>({
         resolver: zodResolver(signUpSchema)
     })
+
+    const registerWithMask = useHookFormMask(register);
 
     const watchImage = watch('image')
 
@@ -56,13 +85,6 @@ export default function SignUpForm() {
         }
     }, [watchImage])
 
-    function handlePhoneChange(event: ChangeEvent<HTMLInputElement>) {
-        const input = event.target.value.replace(/\D/g, '')
-        if (input.length <= 12) {
-            setPhoneNumber(input)
-        }
-    }
-
     async function handleCreateNewUser({
         name,
         email,
@@ -75,7 +97,7 @@ export default function SignUpForm() {
             const formData = new FormData()
 
             const photo = image[0]
-            const phone_number = phone
+            const phone_number = phone || ""
 
             formData.append('name', name)
             formData.append('email', email)
@@ -96,7 +118,7 @@ export default function SignUpForm() {
                 )
                 console.log('Response:', response.data)
                 if (response) {
-                    toast.success('Login realizado com sucesso')
+                    toast.success('Conta criada com sucesso. Redirecionando...')
                     router.push('/dashboard')
                 }
             } catch (error) {
@@ -109,7 +131,7 @@ export default function SignUpForm() {
                             toast.error('Erro ao tentar enviar formulário');
                         }
                     } else {
-                        toast.error('Erro desconhecido');
+                        toast.error('Erro ao criar conta. Por favor, tente novamente.');
                     }
 
                 }
@@ -143,26 +165,32 @@ export default function SignUpForm() {
                         display={"none"}
                         {...register('image')}
                     />
-                    <Button type="button" width={"6rem"}>
-                        <label className={styles.labelButton} htmlFor="files">Select file</label>
+                    <Button type="button">
+                        <label className={styles.labelButton} htmlFor="files">Selecionar Imagem</label>
                     </Button>
                 </Flex>
                 <Field
                     label="Nome completo"
+                    required
                     invalid={!!errors.name}
                     errorText={errors.name?.message}
                 >
                     <Input
-                        {...register("name", { required: "Nome completo é obrigatório" })} required minLength={3}
+                        {...register("name")}
+                        maxLength={70}
                     />
                 </Field>
                 <Field
                     label="E-mail"
+                    required
                     invalid={!!errors.email}
                     errorText={errors.email?.message}
                 >
                     <Input
-                        {...register("email", { required: "E-mail é obrigatório" })} type="email" required minLength={3}
+                        {...register("email")}
+                        type="email"
+                        maxLength={254}
+                        autoComplete="email"
                     />
                 </Field>
                 <Field
@@ -171,31 +199,46 @@ export default function SignUpForm() {
                     errorText={errors.phone?.message}
                 >
                     <Input
-                        {...register("phone", { required: "Celular é obrigatório" })} id="phone" minLength={12} maxLength={12} value={phoneNumber} onChange={handlePhoneChange}
+                        placeholder="(99) 99999-9999"
+                        {...registerWithMask("phone", "(99) 99999-9999")}
                     />
                 </Field>
                 <Field
                     label="Senha"
+                    required
                     invalid={!!errors.password}
                     errorText={errors.password?.message}
                 >
                     <PasswordInput
-                        {...register("password", { required: "Senha é obrigatória" })} required minLength={5} maxLength={15} visible={showPassword}
+                        {...register("password")}
+                        visible={showPassword}
                         onVisibleChange={setShowPassword}
+                        maxLength={15}
+                        autoComplete="new-password"
                     />
                 </Field>
 
                 <Field
                     label="Confirmar Senha"
+                    required
                     invalid={!!errors.confirmPassword}
                     errorText={errors.confirmPassword?.message}
                 >
                     <PasswordInput
-                        {...register("confirmPassword", { required: "Confirmar senha é obrigatório" })} required minLength={5} maxLength={15} visible={showConfirmPassword}
+                        {...register("confirmPassword")}
+                        visible={showConfirmPassword}
                         onVisibleChange={setShowConfirmPassword}
+                        maxLength={15}
+                        autoComplete="new-password"
                     />
                 </Field>
-                <Button type="submit" width={"6rem"} disabled={isSubmitting}>Cadastrar</Button>
+                <Button 
+                    type="submit" 
+                    loading={isSubmitting} 
+                    disabled={isSubmitting}
+                >
+                    Cadastrar
+                </Button>
             </Stack>
         </form>
     )
