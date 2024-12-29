@@ -27,8 +27,8 @@ export default function UsersTable({ currentUsers }: UsersTableProps) {
                                 <Table.Cell>{user.name}</Table.Cell>
                                 <Table.Cell>{user.email}</Table.Cell>
                                 <Table.Cell>0123456789</Table.Cell>
-                                {user.photo_filename && (
-                                    <Table.Cell display={"flex"} justifyContent={"center"}>
+                                <Table.Cell display={"flex"} justifyContent={"center"}>
+                                    {user.photo_filename && (
                                         <Image
                                             src={`https://techsoluctionscold.com.br/api-boats/uploads/tests/${user.photo_filename}`}
                                             alt="Imagem do Usuário"
@@ -36,8 +36,8 @@ export default function UsersTable({ currentUsers }: UsersTableProps) {
                                             height={100}
                                             quality={100}
                                         />
-                                    </Table.Cell>
-                                )}
+                                    )}
+                                </Table.Cell>
                             </Table.Row>
                         ))}
                     </Table.Body>
