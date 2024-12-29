@@ -28,12 +28,13 @@ export default function UsersTable({ currentUsers }: UsersTableProps) {
                                 <Table.Cell>{user.email}</Table.Cell>
                                 <Table.Cell>0123456789</Table.Cell>
                                 {user.photo_filename && (
-                                    <Table.Cell minHeight={100} minWidth={100} display={"flex"} justifyContent={"center"}>
+                                    <Table.Cell display={"flex"} justifyContent={"center"}>
                                         <Image
                                             src={`https://techsoluctionscold.com.br/api-boats/uploads/tests/${user.photo_filename}`}
                                             alt="Imagem do Usuário"
                                             width={100}
                                             height={100}
+                                            quality={100}
                                         />
                                     </Table.Cell>
                                 )}
