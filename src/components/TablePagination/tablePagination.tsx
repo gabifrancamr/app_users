@@ -30,7 +30,7 @@ export default function TablePagination({
           />
         </Link>
         {[...Array(totalPages)].map((_, index) => (
-          <Link href={`/dashboard?page=${index + 1}`}>
+          <Link key={index} href={`/dashboard?page=${index + 1}`}>
           <PaginationItem type="page" value={index + 1} key={index} />
           </Link>
         ))}
