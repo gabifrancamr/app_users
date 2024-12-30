@@ -5,7 +5,7 @@ import UsersTable from "@/components/UsersTable/usersTable"
 import { User } from "@/types"
 import { Box, Flex, Input, Spinner, Text } from "@chakra-ui/react"
 import axios from "axios"
-import { useSearchParams } from "next/navigation"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import { MdError } from "react-icons/md"
 
@@ -17,6 +17,9 @@ export default function Dashboard() {
 
   const searchParams = useSearchParams()
   const pageParam = searchParams?.get('page') || '1'
+  const inputSearchParam = searchParams?.get("search") || "";
+  const pathname = usePathname();
+  const { replace } = useRouter();
 
   const currentPage = parseInt(pageParam, 10) || 1
   const usersPerPage = 5
@@ -28,6 +31,10 @@ export default function Dashboard() {
   const totalPages = Math.ceil(usersLength / usersPerPage)
 
   useEffect(() => {
+    if (inputSearchParam) {
+      setInputSearch(inputSearchParam)
+    }
+
     async function fetchData() {
       try {
         const response = await axios.post(
@@ -45,16 +52,25 @@ export default function Dashboard() {
   }, [])
 
   useEffect(() => {
-    if (inputSearch.length === 0) {
-      setFilteredUsers(users)
-    } else {
+    const params = new URLSearchParams(searchParams);
+ 
+    if (inputSearch.length >= 1) {
+      params.set('page', '1');
+      params.set("search", inputSearch)
+
       const filtered = users.filter(
         (user) =>
           user.name.toLowerCase().includes(inputSearch.toLowerCase()) ||
           user.email.toLowerCase().includes(inputSearch.toLowerCase()),
       )
+
       setFilteredUsers(filtered)
+    } else {
+      setFilteredUsers(users)
+      params.delete("search")
     }
+
+    replace(`${pathname}?${params.toString()}`);
   }, [inputSearch, users])
 
   return (
