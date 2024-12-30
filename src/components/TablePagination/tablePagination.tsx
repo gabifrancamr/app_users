@@ -8,13 +8,24 @@ import {
 } from "@/components/ui/pagination";
 import { TablePaginationProps } from "@/types";
 import { HStack } from "@chakra-ui/react";
-import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+
 
 export default function TablePagination({
   currentPage,
   totalPages,
   usersLength,
 }: TablePaginationProps) {
+  const searchParams = useSearchParams()
+  const pathname = usePathname();
+  const { replace } = useRouter();
+
+  function createPageURL(pageNumber: number){
+    const params = new URLSearchParams(searchParams);
+    params.set('page', pageNumber.toString());
+    replace(`${pathname}?${params.toString()}`);
+  };
+
   return (
     <PaginationRoot
       count={usersLength}
@@ -24,21 +35,22 @@ export default function TablePagination({
       justifyContent={"center"}
     >
       <HStack>
-        <Link href={`dashboard?page=${currentPage - 1}`}>
-          <PaginationPrevTrigger
-            disabled={currentPage <= 1}
-          />
-        </Link>
+        <PaginationPrevTrigger
+          disabled={currentPage <= 1} 
+          onClick={() => createPageURL(currentPage - 1)}
+        />
         {[...Array(totalPages)].map((_, index) => (
-          <Link key={index} href={`/dashboard?page=${index + 1}`}>
-          <PaginationItem type="page" value={index + 1} key={index} />
-          </Link>
+          <PaginationItem 
+            type="page" 
+            value={index + 1} 
+            key={index} 
+            onClick={() => createPageURL(index + 1)} 
+          />
         ))}
-        <Link href={`dashboard?page=${currentPage + 1}`}>
         <PaginationNextTrigger
           disabled={currentPage >= totalPages}
+          onClick={() => createPageURL(currentPage + 1)}
         />
-        </Link>
       </HStack>
     </PaginationRoot>
   );
