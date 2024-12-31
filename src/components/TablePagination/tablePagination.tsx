@@ -6,17 +6,19 @@ import {
   PaginationPrevTrigger,
   PaginationRoot
 } from "@/components/ui/pagination";
-import { TablePaginationProps } from "@/types";
+import { UsersContext } from "@/contexts/usersContexts";
 import { HStack } from "@chakra-ui/react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useContext } from "react";
 
 
-export default function TablePagination({
-  currentPage,
-  totalPages,
-  usersLength,
-}: TablePaginationProps) {
-  const searchParams = useSearchParams()
+export default function TablePagination() {
+  
+  const { currentPage, filteredUsers, usersPerPage, searchParams } = useContext(UsersContext)
+
+  const usersLength = filteredUsers.length
+  const totalPages = Math.ceil(usersLength / usersPerPage)
+
   const pathname = usePathname();
   const { replace } = useRouter();
 
