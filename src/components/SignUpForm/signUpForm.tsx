@@ -4,7 +4,7 @@ import styles from "./signUp.module.css";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { PasswordInput } from "@/components/ui/password-input";
-import imagePreview from "@/hooks/imagePreview";
+import useImagePreview from "@/hooks/useImagePreview";
 import { Flex, Input, Stack } from "@chakra-ui/react";
 import { zodResolver } from '@hookform/resolvers/zod';
 import axios from "axios";
@@ -71,7 +71,7 @@ export default function SignUpForm() {
     const registerWithMask = useHookFormMask(register);
 
     const watchImage = watch('image')
-    const preview = imagePreview(watchImage)
+    const preview = useImagePreview(watchImage)
 
     async function handleCreateNewUser({
         name,

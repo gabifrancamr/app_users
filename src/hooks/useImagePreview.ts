@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 
-export default function imagePreview(watchImage: FileList) {
+export default function useImagePreview(watchImage: FileList) {
     const [preview, setPreview] = useState<string | null>(null)
     useEffect(() => {
         if (watchImage && watchImage[0]) {
