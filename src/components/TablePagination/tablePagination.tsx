@@ -7,6 +7,7 @@ import {
   PaginationRoot
 } from "@/components/ui/pagination";
 import { UsersContext } from "@/contexts/usersContexts";
+import { usePagination } from "@/hooks/usePagination";
 import { HStack } from "@chakra-ui/react";
 import { usePathname, useRouter } from "next/navigation";
 import { useContext } from "react";
@@ -14,7 +15,9 @@ import { useContext } from "react";
 
 export default function TablePagination() {
   
-  const { currentPage, filteredUsers, usersPerPage, searchParams } = useContext(UsersContext)
+  const {  filteredUsers } = useContext(UsersContext)
+
+  const { currentPage, usersPerPage, params } = usePagination()
 
   const usersLength = filteredUsers.length
   const totalPages = Math.ceil(usersLength / usersPerPage)
@@ -23,7 +26,6 @@ export default function TablePagination() {
   const { replace } = useRouter();
 
   function createPageURL(pageNumber: number){
-    const params = new URLSearchParams(searchParams);
     params.set('page', pageNumber.toString());
     replace(`${pathname}?${params.toString()}`);
   };
