@@ -1,11 +1,14 @@
 import { UsersContext } from "@/contexts/usersContexts"
+import { usePagination } from "@/hooks/usePagination"
 import { Stack, Table } from "@chakra-ui/react"
 import Image from "next/image"
 import { useContext } from "react"
 import { NotFoundUsers } from "../NotFoundUsers/notFoundUsers"
 
 export default function UsersTable() {
-    const { currentPage, usersPerPage, filteredUsers } = useContext(UsersContext)
+    const { filteredUsers } = useContext(UsersContext)
+
+    const { currentPage, usersPerPage } = usePagination()
     
     const startIndex = (currentPage - 1) * usersPerPage 
     const endIndex = startIndex + usersPerPage 
