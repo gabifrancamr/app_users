@@ -5,15 +5,15 @@ import Image from "next/image"
 import { NotFoundUsers } from "../NotFoundUsers/notFoundUsers"
 
 interface UsersTableProps {
-    users: User[];
+    filteredUsers: User[];
   }
 
-export default function UsersTable({ users }: UsersTableProps) {
+export default function UsersTable({ filteredUsers }: UsersTableProps) {
     const {currentPage, usersPerPage} = usePagination()
     
     const startIndex = (currentPage - 1) * usersPerPage 
     const endIndex = startIndex + usersPerPage 
-    const currentUsers = users.slice(startIndex, endIndex) 
+    const currentUsers = filteredUsers.slice(startIndex, endIndex) 
 
     const baseUrlImg = 'https://techsoluctionscold.com.br/api-boats/uploads/tests/'
 

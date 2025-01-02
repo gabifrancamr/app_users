@@ -15,11 +15,6 @@ export default function Dashboard() {
   const search = searchParams?.get("search") || "";
   const { filteredUsers, isLoading, isError } = useGetUsers(search);
 
-  // if (isLoading) return <LoadingUsers />;
-  // if (isError) return <NotFoundUsers />;
-
-  // const {errorFindUsers, users} = useContext(UsersContext)
-
   return (
     <Box>
       {!isError ? (
@@ -27,8 +22,8 @@ export default function Dashboard() {
           <Flex alignItems={"flex-start"} justify={"center"} padding={"1.5"}>
             <Box spaceY={3} width={{ base: '100%', md: '700px' }} padding={'2rem'}>
               <InputSearch />
-              <UsersTable users={filteredUsers} />
-              <TablePagination totalUsers={filteredUsers.length} />
+              <UsersTable filteredUsers={filteredUsers} />
+              <TablePagination filteredUsers={filteredUsers} />
             </Box>
           </Flex>
         ) : (

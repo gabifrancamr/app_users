@@ -7,22 +7,19 @@ import {
   PaginationRoot
 } from "@/components/ui/pagination";
 import { usePagination } from "@/hooks/usePagination";
+import { User } from "@/types/types";
 import { HStack } from "@chakra-ui/react";
 import { usePathname, useRouter } from "next/navigation";
 
 interface TablePaginationProps {
-  totalUsers: number
+  filteredUsers: User[];
 }
 
-
-export default function TablePagination({ totalUsers }: TablePaginationProps) {
-
-  // const { filteredUsers } = useContext(UsersContext)
-
+export default function TablePagination({ filteredUsers }: TablePaginationProps) {
   const { currentPage, usersPerPage, params } = usePagination()
 
-  // const usersLength = filteredUsers.length
-  const totalPages = Math.ceil(totalUsers / usersPerPage)
+  const usersLength = filteredUsers.length
+  const totalPages = Math.ceil(usersLength / usersPerPage)
 
   const pathname = usePathname();
   const { replace } = useRouter();
@@ -34,7 +31,7 @@ export default function TablePagination({ totalUsers }: TablePaginationProps) {
 
   return (
     <PaginationRoot
-      count={totalUsers}
+      count={usersLength}
       pageSize={5}
       page={currentPage}
       display={"flex"}
