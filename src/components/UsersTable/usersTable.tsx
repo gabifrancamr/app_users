@@ -9,10 +9,12 @@ export default function UsersTable() {
     const { filteredUsers } = useContext(UsersContext)
 
     const { currentPage, usersPerPage } = usePagination()
-    
-    const startIndex = (currentPage - 1) * usersPerPage 
-    const endIndex = startIndex + usersPerPage 
-    const currentUsers = filteredUsers.slice(startIndex, endIndex) 
+
+    const startIndex = (currentPage - 1) * usersPerPage
+    const endIndex = startIndex + usersPerPage
+    const currentUsers = filteredUsers.slice(startIndex, endIndex)
+
+    const baseUrlImg = 'https://techsoluctionscold.com.br/api-boats/uploads/tests/'
 
     return (
         <Stack gap="10">
@@ -29,25 +31,28 @@ export default function UsersTable() {
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
-                            {currentUsers.map((user) => (
-                                <Table.Row key={user.id}>
-                                    <Table.Cell>{user.id}</Table.Cell>
-                                    <Table.Cell>{user.name}</Table.Cell>
-                                    <Table.Cell>{user.email}</Table.Cell>
-                                    <Table.Cell>0123456789</Table.Cell>
-                                    <Table.Cell display={"flex"} justifyContent={"center"}>
-                                        {user.photo_filename && (
-                                            <Image
-                                                src={`https://techsoluctionscold.com.br/api-boats/uploads/tests/${user.photo_filename}`}
-                                                alt="Imagem do Usuário"
-                                                width={100}
-                                                height={100}
-                                                quality={100}
-                                            />
-                                        )}
-                                    </Table.Cell>
-                                </Table.Row>
-                            ))}
+                            {currentUsers.map((user) => {
+                                const imgSrc = baseUrlImg + user.photo_filename
+                                return (
+                                    <Table.Row key={user.id}>
+                                        <Table.Cell>{user.id}</Table.Cell>
+                                        <Table.Cell>{user.name}</Table.Cell>
+                                        <Table.Cell>{user.email}</Table.Cell>
+                                        <Table.Cell>0123456789</Table.Cell>
+                                        <Table.Cell display={"flex"} justifyContent={"center"}>
+                                            {user.photo_filename && (
+                                                <Image
+                                                    src={imgSrc}
+                                                    alt="Imagem do Usuário"
+                                                    width={100}
+                                                    height={100}
+                                                    quality={100}
+                                                />
+                                            )}
+                                        </Table.Cell>
+                                    </Table.Row>
+                                )
+                            })}
                         </Table.Body>
                     </Table.Root>
                 </Table.ScrollArea>
