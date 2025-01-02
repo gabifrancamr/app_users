@@ -1,21 +1,26 @@
-import { listAllUsers } from '@/api/listAllUsers';
-import { useQuery } from '@tanstack/react-query';
+import { listAllUsers } from "@/api/listAllUsers";
+import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 
 export function useGetUsers(searchTerm?: string) {
     const query = useQuery({
         queryKey: ['users'],
         queryFn: listAllUsers,
-        select: (users) => {
-            if(!searchTerm) return users;
+        staleTime: 1000 * 60 * 5
+    });
 
-            return users.filter(
-                (user) => 
-                    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    user.email.toLowerCase().includes(searchTerm.toLowerCase())
-            )
-        },
-        staleTime: 1000 * 60 *5
-    })
+    const filteredUsers = useMemo(() => {
+        if (!searchTerm || !query.data) return query.data;
 
-    return query
+        return query.data.filter(user =>
+            user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            user.email.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+    }, [query.data, searchTerm]);
+
+    return {
+        ...query,
+        allUsers: query.data,
+        filteredUsers: filteredUsers || []
+    };
 }

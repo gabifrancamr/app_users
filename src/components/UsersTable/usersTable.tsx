@@ -1,18 +1,19 @@
-import { UsersContext } from "@/contexts/usersContexts"
 import { usePagination } from "@/hooks/usePagination"
+import { User } from "@/types/types"
 import { Stack, Table } from "@chakra-ui/react"
 import Image from "next/image"
-import { useContext } from "react"
 import { NotFoundUsers } from "../NotFoundUsers/notFoundUsers"
 
-export default function UsersTable() {
-    const { filteredUsers } = useContext(UsersContext)
+interface UsersTableProps {
+    users: User[];
+  }
 
+export default function UsersTable({ users }: UsersTableProps) {
     const {currentPage, usersPerPage} = usePagination()
     
     const startIndex = (currentPage - 1) * usersPerPage 
     const endIndex = startIndex + usersPerPage 
-    const currentUsers = filteredUsers.slice(startIndex, endIndex) 
+    const currentUsers = users.slice(startIndex, endIndex) 
 
     return (
         <Stack gap="10">

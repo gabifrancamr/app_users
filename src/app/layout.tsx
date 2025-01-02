@@ -1,5 +1,5 @@
 import { Provider } from "@/components/ui/provider";
-import { UsersProvider } from "@/contexts/usersContexts";
+import { QueryClientProvider } from "@/contexts/QueryClientProvider";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Toaster } from 'sonner';
@@ -21,9 +21,9 @@ export default function RootLayout({
     <html lang="pt-br" suppressHydrationWarning>
       <body className={inter.className}>
         <Provider>
-          <UsersProvider>
-            {children}
-          </UsersProvider>
+            <QueryClientProvider>
+              {children}
+            </QueryClientProvider>
           <Toaster richColors position="top-center" closeButton />
         </Provider>
       </body>
