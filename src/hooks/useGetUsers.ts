@@ -1,8 +1,9 @@
 import { listAllUsers } from "@/api/listAllUsers";
 import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "next/navigation";
 import { useMemo } from "react";
 
-export function useGetUsers(searchTerm?: string) {
+function getUsers(searchTerm?: string) {
     const query = useQuery({
         queryKey: ['users'],
         queryFn: listAllUsers,
@@ -23,4 +24,10 @@ export function useGetUsers(searchTerm?: string) {
         allUsers: query.data,
         filteredUsers: filteredUsers || []
     };
+}
+
+export function useGetUsers() {
+    const searchParams = useSearchParams();
+    const search = searchParams?.get("search") || "";
+    return getUsers(search);
 }

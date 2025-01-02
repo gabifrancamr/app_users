@@ -1,14 +1,11 @@
+import { useGetUsers } from "@/hooks/useGetUsers"
 import { usePagination } from "@/hooks/usePagination"
-import { User } from "@/types/types"
 import { Stack, Table } from "@chakra-ui/react"
 import Image from "next/image"
 import { NotFoundUsers } from "../NotFoundUsers/notFoundUsers"
 
-interface UsersTableProps {
-    filteredUsers: User[];
-  }
-
-export default function UsersTable({ filteredUsers }: UsersTableProps) {
+export default function UsersTable() {
+    const { filteredUsers } = useGetUsers();
     const {currentPage, usersPerPage} = usePagination()
     
     const startIndex = (currentPage - 1) * usersPerPage 

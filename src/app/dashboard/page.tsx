@@ -7,13 +7,9 @@ import TablePagination from "@/components/TablePagination/tablePagination"
 import UsersTable from "@/components/UsersTable/usersTable"
 import { useGetUsers } from "@/hooks/useGetUsers"
 import { Box, Flex } from "@chakra-ui/react"
-import { useSearchParams } from "next/navigation"
 
 export default function Dashboard() {
-
-  const searchParams = useSearchParams();
-  const search = searchParams?.get("search") || "";
-  const { filteredUsers, isLoading, isError } = useGetUsers(search);
+  const { isLoading, isError } = useGetUsers();
 
   return (
     <Box>
@@ -22,8 +18,8 @@ export default function Dashboard() {
           <Flex alignItems={"flex-start"} justify={"center"} padding={"1.5"}>
             <Box spaceY={3} width={{ base: '100%', md: '700px' }} padding={'2rem'}>
               <InputSearch />
-              <UsersTable filteredUsers={filteredUsers} />
-              <TablePagination filteredUsers={filteredUsers} />
+              <UsersTable />
+              <TablePagination />
             </Box>
           </Flex>
         ) : (

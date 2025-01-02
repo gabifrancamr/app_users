@@ -6,16 +6,13 @@ import {
   PaginationPrevTrigger,
   PaginationRoot
 } from "@/components/ui/pagination";
+import { useGetUsers } from "@/hooks/useGetUsers";
 import { usePagination } from "@/hooks/usePagination";
-import { User } from "@/types/types";
 import { HStack } from "@chakra-ui/react";
 import { usePathname, useRouter } from "next/navigation";
 
-interface TablePaginationProps {
-  filteredUsers: User[];
-}
-
-export default function TablePagination({ filteredUsers }: TablePaginationProps) {
+export default function TablePagination() {
+  const { filteredUsers } = useGetUsers();
   const { currentPage, usersPerPage, params } = usePagination()
 
   const usersLength = filteredUsers.length
