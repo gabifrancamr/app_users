@@ -15,6 +15,8 @@ export default function UsersTable({ users }: UsersTableProps) {
     const endIndex = startIndex + usersPerPage 
     const currentUsers = users.slice(startIndex, endIndex) 
 
+    const baseUrlImg = 'https://techsoluctionscold.com.br/api-boats/uploads/tests/'
+
     return (
         <Stack gap="10">
             {currentUsers.length > 0 ? (
@@ -30,25 +32,28 @@ export default function UsersTable({ users }: UsersTableProps) {
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
-                            {currentUsers.map((user) => (
-                                <Table.Row key={user.id}>
-                                    <Table.Cell>{user.id}</Table.Cell>
-                                    <Table.Cell>{user.name}</Table.Cell>
-                                    <Table.Cell>{user.email}</Table.Cell>
-                                    <Table.Cell>0123456789</Table.Cell>
-                                    <Table.Cell display={"flex"} justifyContent={"center"}>
-                                        {user.photo_filename && (
-                                            <Image
-                                                src={`https://techsoluctionscold.com.br/api-boats/uploads/tests/${user.photo_filename}`}
-                                                alt="Imagem do Usuário"
-                                                width={100}
-                                                height={100}
-                                                quality={100}
-                                            />
-                                        )}
-                                    </Table.Cell>
-                                </Table.Row>
-                            ))}
+                            {currentUsers.map((user) => {
+                                const imgSrc = baseUrlImg + user.photo_filename
+                                return (
+                                    <Table.Row key={user.id}>
+                                        <Table.Cell>{user.id}</Table.Cell>
+                                        <Table.Cell>{user.name}</Table.Cell>
+                                        <Table.Cell>{user.email}</Table.Cell>
+                                        <Table.Cell>0123456789</Table.Cell>
+                                        <Table.Cell display={"flex"} justifyContent={"center"}>
+                                            {user.photo_filename && (
+                                                <Image
+                                                    src={imgSrc}
+                                                    alt="Imagem do Usuário"
+                                                    width={100}
+                                                    height={100}
+                                                    quality={100}
+                                                />
+                                            )}
+                                        </Table.Cell>
+                                    </Table.Row>
+                                )
+                            })}
                         </Table.Body>
                     </Table.Root>
                 </Table.ScrollArea>
