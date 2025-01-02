@@ -1,4 +1,5 @@
 "use client"
+import { registerAccount } from "@/api/registerAccount";
 import styles from "./signUp.module.css";
 
 import { Button } from "@/components/ui/button";
@@ -7,6 +8,7 @@ import { PasswordInput } from "@/components/ui/password-input";
 import imagePreview from "@/hooks/imagePreview";
 import { Flex, Input, Stack } from "@chakra-ui/react";
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -73,38 +75,15 @@ export default function SignUpForm() {
     const watchImage = watch('image')
     const preview = imagePreview(watchImage)
 
-    async function handleCreateNewUser({
-        name,
-        email,
-        phone,
-        image,
-        password,
-        confirmPassword,
-    }: typeSignUpSchema) {
-        if (password === confirmPassword) {
-            const formData = new FormData()
+    const { mutateAsync: registerAccountFn } = useMutation({
+        mutationFn: registerAccount,
+      })
 
-            const photo = image[0]
-            const phone_number = phone || ""
-
-            formData.append('name', name)
-            formData.append('email', email)
-            formData.append('password', password)
-            formData.append('confirmPassword', confirmPassword)
-            formData.append('phone_number', phone_number)
-            formData.append('photo', photo)
-
+    async function handleCreateNewUser(data: typeSignUpSchema) {
+        if (data.password === data.confirmPassword) {
             try {
-                const response = await axios.post(
-                    'https://techsoluctionscold.com.br/api-boats/tests/register_account.php',
-                    formData,
-                    {
-                        headers: {
-                            'Content-Type': 'multipart/form-data',
-                        },
-                    },
-                )
-                console.log('Response:', response.data)
+                const response = await registerAccountFn(data)
+                console.log('Response:', response)
                 if (response) {
                     toast.success('Conta criada com sucesso. Redirecionando...')
                     router.push('/dashboard')
