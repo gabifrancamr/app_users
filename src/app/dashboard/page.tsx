@@ -17,7 +17,7 @@ export default function Dashboard() {
       {!errorFindUsers ? (
         users.length > 0 ? (
           <Flex alignItems={"flex-start"} justify={"center"} padding={"1.5"}>
-            <Box spaceY={3} width={{ base: '100%', md: '630px' }} padding={'2rem'}>
+            <Box spaceY={3} width={{ base: '100%', md: '700px' }} padding={'2rem'}>
               <InputSearch />
               <UsersTable />
               <TablePagination />
